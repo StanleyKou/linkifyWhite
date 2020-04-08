@@ -3,11 +3,11 @@ var jira_path, regex;
 function searchForKeyNames() {
     function createLinkFromNode(node) {
         var l, m;
-        var txt = node.textContent;
+        var txt = node.textContent.trim();
         var span = null;
         var p = 0;
 
-        if (txt.trim().length == 0)
+        if (txt.length == 0)
             return;
 
         jiraTagExpression = new RegExp("(" + regex + ")", "g");
@@ -19,7 +19,10 @@ function searchForKeyNames() {
             }
 
             // Get the link without trailing dots
-            link = m[0].replace(/\.*$/, '');
+            keyword = m[0]
+            link = keyword
+                .replace(/\.*$/, '')
+                .replace(" ", "-");
 
             console.log("link: " + link)
 
@@ -29,21 +32,7 @@ function searchForKeyNames() {
             // Create a link and put it in the span
             a = document.createElement('a');
             a.className = 'linkclass';
-            a.appendChild(document.createTextNode(link));
-
-            if (link.startsWith("Feature")) {
-                link = link.replace("Feature/", "");
-                link = link.replace(" ", "-")
-            } else if (link.startsWith("Bugfix")) {
-                link = link.replace("Bugfix/", "");
-                link = link.replace(" ", "-")
-            } else if (link.startsWith("Hotfix")) {
-                link = link.replace("Hotfix/", "");
-                link = link.replace(" ", "-")
-            } else if (link.startsWith("Release")) {
-                link = link.replace("Release/", "");
-                link = link.replace(" ", "-")
-            }
+            a.appendChild(document.createTextNode(keyword));
 
             a.setAttribute('href', jira_path + link);
             a.style.textDecoration = "underline";
@@ -73,7 +62,6 @@ function searchForKeyNames() {
             createLinkFromNode(node);
         }
     }
-
 }
 
 var observer = new MutationObserver(onMutation);
